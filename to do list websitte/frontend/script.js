@@ -5,7 +5,7 @@ let currentFilter = 'all';
 let searchQuery = '';
 let editingId = null;
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://task-flow-igc2.onrender.com/api';
 
 // ========== DOM REFS ==========
 // Login
