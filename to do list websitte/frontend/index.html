@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskFlow · Organize Everything</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- ========== AMBIENT BACKGROUND ========== -->
+    <div class="bg-scene" aria-hidden="true">
+        <div class="bg-floor"></div>
+        <div class="bg-orb orb-orange"></div>
+        <div class="bg-orb orb-teal"></div>
+        <div class="bg-orb orb-violet"></div>
+        <div class="bg-grain"></div>
+    </div>
+
+    <!-- ========== LOGIN PAGE ========== -->
+    <div id="loginPage" class="login-page">
+        <div class="login-shell">
+            <div class="login-hero">
+                <div>
+                    <span class="hero-badge"><i class="fas fa-bolt"></i> Organize · Prioritize · Succeed</span>
+                    <h1 class="hero-title">TASK<span>FLOW</span></h1>
+                    <p class="hero-line">Work, life, and everything in between — stay on top of it all.</p>
+                </div>
+                <div class="hero-ball">
+                    <div class="ball">🚀</div>
+                    <div class="ball-shadow"></div>
+                </div>
+                <ul class="hero-stats">
+                    <li><span class="num">24/7</span><span class="label">Synced</span></li>
+                    <li><span class="num">100%</span><span class="label">Private</span></li>
+                    <li><span class="num">0</span><span class="label">Clutter</span></li>
+                </ul>
+            </div>
+            <div class="login-container" id="authCard">
+                <div class="login-tabs">
+                    <button class="tab-btn active" data-tab="login">Log In</button>
+                    <button class="tab-btn" data-tab="signup">Sign Up</button>
+                    <span class="tab-indicator"></span>
+                </div>
+                <form id="loginForm" class="login-form active-form">
+                    <div class="form-group">
+                        <label for="loginEmail"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com" required autocomplete="email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword"><i class="fas fa-lock"></i> Password</label>
+                        <div class="password-wrap">
+                            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password" />
+                            <button type="button" class="pw-toggle" data-target="loginPassword" aria-label="Show password"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="login-btn">
+                        <span class="btn-label">Log In</span>
+                        <span class="btn-spinner"></span>
+                    </button>
+                    <div class="form-error" id="loginError"></div>
+                </form>
+                <form id="signupForm" class="login-form">
+                    <div class="form-group">
+                        <label for="signupName"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="signupName" placeholder="John Doe" required autocomplete="name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="signupEmail" placeholder="your@email.com" required autocomplete="email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPhone"><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="signupPhone" placeholder="+1 234 567 890" required autocomplete="tel" />
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword"><i class="fas fa-lock"></i> Password</label>
+                        <div class="password-wrap">
+                            <input type="password" id="signupPassword" placeholder="Min 6 characters" required autocomplete="new-password" />
+                            <button type="button" class="pw-toggle" data-target="signupPassword" aria-label="Show password"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupConfirm"><i class="fas fa-check-circle"></i> Confirm Password</label>
+                        <div class="password-wrap">
+                            <input type="password" id="signupConfirm" placeholder="Re-enter password" required autocomplete="new-password" />
+                            <button type="button" class="pw-toggle" data-target="signupConfirm" aria-label="Show password"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="login-btn">
+                        <span class="btn-label">Create Account</span>
+                        <span class="btn-spinner"></span>
+                    </button>
+                    <div class="form-error" id="signupError"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== APP PAGE ========== -->
+    <div id="appPage" class="app-page" style="display:none;">
+
+        <div id="toast" class="toast"><i class="toast-icon fas fa-check-circle"></i><span id="toastMessage"></span></div>
+
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="brand">
+                    <span class="brand-mark">🚀</span>
+                    <h1>TASK<span>FLOW</span></h1>
+                </div>
+                <div class="header-actions">
+                    <span id="userDisplay"></span>
+                    <button id="themeToggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+                    <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+
+            <!-- ===== VIEW NAVIGATION (ALWAYS VISIBLE) ===== -->
+            <div class="view-nav">
+                <button id="viewTasksBtn" class="view-toggle-btn active" data-view="tasks">
+                    <i class="fas fa-list"></i> Tasks
+                </button>
+                <button id="viewStatsBtn" class="view-toggle-btn" data-view="stats">
+                    <i class="fas fa-chart-bar"></i> Stats
+                </button>
+                <button id="viewCalendarBtn" class="view-toggle-btn" data-view="calendar">
+                    <i class="fas fa-calendar-alt"></i> Calendar
+                </button>
+            </div>
+
+            <!-- ===== ONBOARDING PAGE ===== -->
+            <div id="onboardingPage" style="display: none;">
+                <div class="onboarding-container">
+                    <h2><i class="fas fa-user-circle"></i> Welcome! Let's set up your profile</h2>
+                    <p class="onboarding-sub">Tell us about yourself so we can personalise your experience.</p>
+
+                    <!-- Role selection -->
+                    <div class="form-group">
+                        <label>What describes you best?</label>
+                        <div class="role-grid">
+                            <button class="role-btn" data-role="student">🎓 Student</button>
+                            <button class="role-btn" data-role="athlete">🏃 Athlete</button>
+                            <button class="role-btn" data-role="professional">💼 Professional</button>
+                            <button class="role-btn" data-role="parent">👨‍👩‍👧 Parent</button>
+                            <button class="role-btn active" data-role="general">🌟 General</button>
+                        </div>
+                    </div>
+
+                    <!-- Category management -->
+                    <div class="form-group">
+                        <label>Your categories (these help organise your tasks)</label>
+                        <div class="category-input-row">
+                            <input type="text" id="newCategoryInput" placeholder="Add a category..." />
+                            <button id="addCategoryBtn" class="mini-btn"><i class="fas fa-plus"></i> Add</button>
+                        </div>
+                        <div id="categoryTags" class="category-tags"></div>
+                        <p class="hint">Tip: Keep categories broad like "Work", "Study", "Fitness"</p>
+                    </div>
+
+                    <button id="finishSetupBtn" class="login-btn"><i class="fas fa-check"></i> Start using TaskFlow</button>
+                    <div class="form-error" id="onboardingError"></div>
+                </div>
+            </div>
+
+            <!-- ===== MAIN APP CONTENT ===== -->
+            <div id="appContent" style="display: none;">
+                <!-- Scoreboard -->
+                <div class="scoreboard">
+                    <div class="score-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+                            <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52"></circle>
+                        </svg>
+                        <div class="ring-center"><span id="ringPercent">0%</span><small>done</small></div>
+                    </div>
+                    <div class="score-stats">
+                        <div class="stat"><span class="stat-num" id="taskCount">0</span><span class="stat-label">Total tasks</span></div>
+                        <div class="stat"><span class="stat-num" id="completedNum">0</span><span class="stat-label">Completed</span></div>
+                        <div class="stat event-stat">
+                            <span class="stat-label">Next up</span>
+                            <span id="eventInfo" class="event-value">✨ No upcoming deadlines</span>
+                        </div>
+                    </div>
+                    <div class="score-actions">
+                        <button id="clearCompletedBtn" class="clear-btn"><i class="fas fa-broom"></i> Clear done</button>
+                    </div>
+                </div>
+
+                <!-- Input Row -->
+                <div class="input-row">
+                    <input type="text" id="taskInput" placeholder="What's next?" />
+                    <input type="date" id="dueDateInput" />
+                    <select id="categorySelect">
+                        <!-- Categories will be dynamically populated from user profile -->
+                    </select>
+                    <select id="energySelect">
+                        <option value="high">🔥 High Energy</option>
+                        <option value="medium" selected>⚡ Medium Energy</option>
+                        <option value="low">💤 Low Energy</option>
+                    </select>
+                    <button id="addTaskBtn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters" id="filterContainer">
+                    <button class="active" data-filter="all">All</button>
+                    <!-- Dynamic category filters will be added here -->
+                </div>
+
+                <!-- Search -->
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search tasks..." />
+                </div>
+
+                <!-- Task List -->
+                <ul id="taskList"></ul>
+            </div>
+
+            <!-- ===== STATS DASHBOARD ===== -->
+            <div id="statsDashboard" style="display: none;">
+                <div class="stats-header">
+                    <h2><i class="fas fa-chart-pie"></i> Analytics</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><span class="stat-number" id="statTotal">0</span><span class="stat-label">Total</span></div>
+                    <div class="stat-card"><span class="stat-number" id="statCompleted">0</span><span class="stat-label">Completed</span></div>
+                    <div class="stat-card"><span class="stat-number" id="statPending">0</span><span class="stat-label">Pending</span></div>
+                    <div class="stat-card"><span class="stat-number" id="statOverdue">0</span><span class="stat-label">Overdue</span></div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <h4>Category</h4>
+                        <canvas id="categoryChart" width="200" height="200"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h4>Energy</h4>
+                        <canvas id="energyChart" width="200" height="200"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h4>Completion Rate</h4>
+                        <div class="circle-progress">
+                            <svg viewBox="0 0 120 120">
+                                <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+                                <circle class="ring-fill" id="statsRingFill" cx="60" cy="60" r="52"></circle>
+                            </svg>
+                            <div class="ring-center"><span id="statsRingPercent">0%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <h4><i class="fas fa-fire"></i> Consistency</h4>
+                    <div class="consistency-grid">
+                        <div class="consistency-card">
+                            <span class="cons-number" id="streakDays">0</span>
+                            <span class="cons-label">Day streak</span>
+                        </div>
+                        <div class="consistency-card">
+                            <span class="cons-number" id="weeklyRate">0%</span>
+                            <span class="cons-label">Completion rate (7d)</span>
+                        </div>
+                        <div class="consistency-card">
+                            <span class="cons-number" id="monthlyTotal">0</span>
+                            <span class="cons-label">Completed this month</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px;">
+                        <canvas id="dailyChart" height="80"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== CALENDAR VIEW ===== -->
+            <div id="calendarView" style="display: none;">
+                <div class="calendar-header">
+                    <button id="calPrevBtn" class="cal-nav-btn"><i class="fas fa-chevron-left"></i></button>
+                    <h2 id="calMonthYear"></h2>
+                    <button id="calNextBtn" class="cal-nav-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <div class="cal-weekday">Sun</div>
+                    <div class="cal-weekday">Mon</div>
+                    <div class="cal-weekday">Tue</div>
+                    <div class="cal-weekday">Wed</div>
+                    <div class="cal-weekday">Thu</div>
+                    <div class="cal-weekday">Fri</div>
+                    <div class="cal-weekday">Sat</div>
+                </div>
+                <div id="calDayDetail" style="display: none;">
+                    <h4 id="calDayLabel"></h4>
+                    <ul id="calDayTasks"></ul>
+                    <button id="calCloseDay" class="modal-btn ghost">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========== CONFIRM MODAL ========== -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-card">
+            <i class="fas fa-triangle-exclamation modal-icon"></i>
+            <h3 id="confirmTitle">Delete this task?</h3>
+            <p id="confirmMsg">This can't be undone.</p>
+            <div class="modal-actions">
+                <button id="confirmCancel" class="modal-btn ghost">Cancel</button>
+                <button id="confirmOk" class="modal-btn danger">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
