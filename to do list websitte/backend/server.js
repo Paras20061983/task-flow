@@ -35,19 +35,25 @@ const auth = async (req, res, next) => {
 app.post('/api/signup', async (req, res) => {
     try {
         const { name, email, phone, password } = req.body;
+
+        // ✅ Check all fields are present
+        if (!name || !email || !phone || !password) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
         const existing = await User.findOne({ email });
         if (existing) return res.status(400).json({ error: 'Email already registered' });
-        
+
         const user = new User({ 
             name, 
             email, 
             phone, 
             password,
-            roles: ['general'], // 👈 default role (array)
+            roles: ['general'],
             categories: ['Personal', 'Work', 'Health', 'Errands']
         });
         await user.save();
-        
+
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.status(201).json({ 
             token, 
@@ -56,15 +62,15 @@ app.post('/api/signup', async (req, res) => {
                 name, 
                 email, 
                 phone,
-                roles: user.roles, // 👈 array of roles
+                roles: user.roles,
                 categories: user.categories
             } 
         });
     } catch (err) {
+        console.error('Signup error:', err);
         res.status(500).json({ error: err.message });
     }
 });
-
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;

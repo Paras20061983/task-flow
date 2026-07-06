@@ -212,12 +212,15 @@ async function handleLogin(e) {
 
 async function handleSignup(e) {
     e.preventDefault();
+
+    // ✅ Get all input values
     const name = signupName.value.trim();
     const email = signupEmail.value.trim();
     const phone = signupPhone.value.trim();
     const password = signupPassword.value.trim();
     const confirm = signupConfirm.value.trim();
 
+    // ✅ Validate all fields
     if (!name || !email || !phone || !password || !confirm) {
         showFieldError(signupError, 'All fields are required.');
         return;
@@ -235,16 +238,27 @@ async function handleSignup(e) {
         return;
     }
 
+    // ✅ Clear old session
+    localStorage.removeItem('taskflow_user');
+    localStorage.removeItem('taskflow_token');
+
     const submitBtn = signupForm.querySelector('.login-btn');
     setBtnLoading(submitBtn, true);
+
     try {
+        // ✅ Log what's being sent
+        console.log('Signup data:', { name, email, phone, password });
+
         const data = await apiCall('/signup', 'POST', { name, email, phone, password });
         setAuthToken(data.token);
         setStoredUser(data.user);
         currentUser = data.user;
         userCategories = data.user.categories || ['Personal', 'Work', 'Health', 'Errands'];
 
-        // Show onboarding instead of app directly
+        // ✅ Update header with new user's name
+        userDisplay.textContent = `👋 ${currentUser.name}`;
+
+        // Show onboarding
         loginPage.style.display = 'none';
         appPage.style.display = 'block';
         appContent.style.display = 'none';
@@ -252,20 +266,20 @@ async function handleSignup(e) {
         calendarView.style.display = 'none';
         onboardingPage.style.display = 'flex';
 
-        // Reset onboarding state for multi-role
+        // Reset onboarding state
         selectedRoles = ['general'];
         userCategories = [...ROLE_CATEGORIES.general];
         renderCategories();
         updateRoleButtons();
         signupError.textContent = '';
         signupForm.reset();
+
     } catch (err) {
         showFieldError(signupError, err.message);
     } finally {
         setBtnLoading(submitBtn, false);
     }
 }
-
 function showFieldError(el, msg) {
     el.textContent = msg;
     el.classList.remove('shake');
