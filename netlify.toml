@@ -1,0 +1,4 @@
+[build]
+  base = "to do list websitte"
+  publish = "frontend"
+  command = ""

@@ -5,7 +5,7 @@ let currentFilter = 'all';
 let searchQuery = '';
 let editingId = null;
 
-const API_BASE = 'https://task-flow-igc2.onrender.com/api';
+const API_BASE = 'http://localhost:5000/api';
 
 // ========== DOM REFS ==========
 // Login
@@ -93,6 +93,9 @@ const calCloseDay = document.getElementById('calCloseDay');
 const viewTasksBtn = document.getElementById('viewTasksBtn');
 const viewStatsBtn = document.getElementById('viewStatsBtn');
 const viewCalendarBtn = document.getElementById('viewCalendarBtn');
+
+// View Navigation (NEW)
+const viewNav = document.getElementById('viewNav');
 
 const RING_CIRCUMFERENCE = 2 * Math.PI * 52;
 
@@ -258,6 +261,9 @@ async function handleSignup(e) {
         // ✅ Update header with new user's name
         userDisplay.textContent = `👋 ${currentUser.name}`;
 
+        // ✅ Hide navigation during onboarding
+        if (viewNav) viewNav.style.display = 'none';
+
         // Show onboarding
         loginPage.style.display = 'none';
         appPage.style.display = 'block';
@@ -299,6 +305,9 @@ function showApp() {
     populateCategories();
     renderSkeleton();
     loadTasks();
+
+    // ✅ Show navigation when logged in
+    if (viewNav) viewNav.style.display = 'flex';
 }
 
 function logout() {
@@ -313,6 +322,9 @@ function logout() {
     loginError.textContent = '';
     signupError.textContent = '';
     switchTab('login');
+
+    // ✅ Hide navigation on logout
+    if (viewNav) viewNav.style.display = 'none';
 }
 
 // ========== ONBOARDING FUNCTIONS ==========
@@ -1248,6 +1260,8 @@ if (token && storedUser) {
 } else {
     loginPage.style.display = 'block';
     appPage.style.display = 'none';
+    // Ensure navigation is hidden when not logged in
+    if (viewNav) viewNav.style.display = 'none';
 }
 
 const tomorrow = new Date();
